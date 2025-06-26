@@ -24,11 +24,12 @@ import { User } from "@supabase/supabase-js";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { LogOut, Plus, Settings, User as UserIcon } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
-import { GroupedChats } from "@/type/chat";
+import { GroupedChats } from "@/types/chat";
 import Link from "next/link";
 import { formatDateLabel } from "@/utils/dateFormat";
+import Image from "next/image";
 
-export function AppSidebar() {
+export default function AppSidebar() {
   const [user, setUser] = useState<User | null>();
   const [chats, setChats] = useState<GroupedChats>();
 
@@ -86,17 +87,29 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar>
-      <SidebarHeader className="flex-row items-center">
-        <img src="/logo.jpg" alt="Logo" width={40} />
-        <h1 className="text-2xl font-bold text-zinc-950">NexiaAI</h1>
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="flex-row items-center gap-2">
+        <Image
+          src="/logo.jpg"
+          alt="Logo"
+          width={32}
+          height={32}
+          className="flex-shrink-0"
+        />
+        <h1 className="text-2xl font-bold text-zinc-950 group-data-[collapsible=icon]:hidden">
+          NexiaAI
+        </h1>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="overflow-hidden">
         <SidebarGroup>
           <SidebarGroupContent>
-            <Button className="w-full" variant="outline">
-              <Plus />
-              New Chat
+            <Button className="w-full rounded-3xl" variant="default" asChild>
+              <Link href="/">
+                <Plus className="h-4 w-4" />
+                <span className="group-data-[collapsible=icon]:hidden">
+                  New Chat
+                </span>
+              </Link>
             </Button>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -104,14 +117,18 @@ export function AppSidebar() {
         {chats && Object.keys(chats).length > 0 ? (
           Object.entries(chats).map(([key, value]) => (
             <SidebarGroup key={key}>
-              <SidebarGroupLabel>{formatDateLabel(key)}</SidebarGroupLabel>
+              <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">
+                {formatDateLabel(key)}
+              </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {value.map((item) => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton asChild>
                         <Link href={`/c/${item.id}`}>
-                          {item.title || "Untitled Chat"}
+                          <span className="group-data-[collapsible=icon]:hidden">
+                            {item.title || "Untitled Chat"}
+                          </span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -121,7 +138,7 @@ export function AppSidebar() {
             </SidebarGroup>
           ))
         ) : (
-          <div className="p-4 text-center text-sm text-gray-500">
+          <div className="p-4 text-center text-sm text-gray-500 group-data-[collapsible=icon]:hidden">
             No chat history
           </div>
         )}
@@ -129,19 +146,22 @@ export function AppSidebar() {
       <SidebarFooter>
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="ghost" className="h-auto w-full justify-start p-2">
-              <Avatar className="mr-3 h-10 w-10 rounded-full">
+            <Button
+              variant="ghost"
+              className="h-auto w-full justify-start p-0 py-2"
+            >
+              <Avatar className="mr-2 h-8 w-8 rounded-full group-data-[collapsible=icon]:mr-0">
                 <AvatarImage
                   src={user?.user_metadata?.avatar_url}
-                  className="rounded-full object-cover"
+                  className="h-8 w-8 rounded-full object-cover"
                 />
-                <AvatarFallback className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 font-semibold text-white">
+                <AvatarFallback className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-xs font-semibold text-white">
                   {getInitials(
                     user?.user_metadata?.full_name || user?.email || "",
                   )}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-col items-start text-left">
+              <div className="flex flex-col items-start text-left group-data-[collapsible=icon]:hidden">
                 <span className="text-sm font-medium text-gray-900">
                   {user?.user_metadata?.full_name || user?.email?.split("@")[0]}
                 </span>
@@ -154,7 +174,7 @@ export function AppSidebar() {
           <PopoverContent
             side="top"
             align="start"
-            className="w-min rounded-lg border border-gray-200 bg-white p-0 shadow-lg"
+            className="w-min rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
             sideOffset={8}
           >
             <Button
