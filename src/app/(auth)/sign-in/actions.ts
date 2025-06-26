@@ -14,7 +14,13 @@ export const signInWithPassword = async (email: string, password: string) => {
   });
 
   if (!result.success) {
-    return new AuthError("Invalid input");
+    return {
+      data: {
+        user: null,
+        session: null,
+      },
+      error: new AuthError("Invalid input"),
+    };
   }
 
   const { data, error } = await supabase.auth.signInWithPassword({

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import ConditionalSidebar from "@/components/ConditionalSidebar";
 
 export const metadata: Metadata = {
   title: "Nexia AI - Free Multi-Model AI Chat & Image Generation",
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased`}>
-        <main>{children}</main>
+        <ConditionalSidebar>
+          <main>{children}</main>
+        </ConditionalSidebar>
         <Toaster />
       </body>
     </html>

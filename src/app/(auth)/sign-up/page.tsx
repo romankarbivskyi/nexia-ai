@@ -31,8 +31,16 @@ export default function Page() {
     },
   });
 
-  const onSubmit = async ({ email, password }: SignUpFormValues) => {
-    const { data, error } = await signUpWithPassword(email, password);
+  const onSubmit = async ({
+    email,
+    password,
+    confirmPassword,
+  }: SignUpFormValues) => {
+    const { data, error } = await signUpWithPassword(
+      email,
+      password,
+      confirmPassword,
+    );
 
     if (error) {
       toast.error(error.message || "Failed to sign in. Please try again.");
