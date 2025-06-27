@@ -48,9 +48,10 @@ export default function AppSidebar() {
     const { data, error } = await supabase
       .from("chats")
       .select("created_at, *")
-      .order("created_at", { ascending: true });
+      .order("created_at", { ascending: false });
 
     if (error) {
+      console.error("Error fetching chats:", error);
     } else {
       const groupedChats = data.reduce((acc, chat) => {
         const date = new Date(chat.created_at).toISOString().split("T")[0];
@@ -61,7 +62,14 @@ export default function AppSidebar() {
         return acc;
       }, {});
 
-      setChats(groupedChats);
+      const sortedGroupedChats = Object.keys(groupedChats)
+        .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+        .reduce((acc, key) => {
+          acc[key] = groupedChats[key];
+          return acc;
+        }, {});
+
+      setChats(sortedGroupedChats);
     }
   };
 
@@ -126,17 +134,23 @@ export default function AppSidebar() {
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {value.map((item) => (
-                    <SidebarMenuItem key={item.id}>
-                      <SidebarMenuButton asChild>
-                        <Link href={`/c/${item.id}`}>
-                          <span className="group-data-[collapsible=icon]:hidden">
-                            {item.title || "Untitled Chat"}
-                          </span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                  {value
+                    .sort(
+                      (a, b) =>
+                        new Date(b.created_at).getTime() -
+                        new Date(a.created_at).getTime(),
+                    )
+                    .map((item) => (
+                      <SidebarMenuItem key={item.id}>
+                        <SidebarMenuButton asChild>
+                          <Link href={`/c/${item.id}`}>
+                            <span className="group-data-[collapsible=icon]:hidden">
+                              {item.title || "Untitled Chat"}
+                            </span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>

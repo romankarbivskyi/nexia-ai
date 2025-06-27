@@ -10,9 +10,9 @@ export const formatDateLabel = (dateString: string) => {
   chatDate.setHours(0, 0, 0, 0);
 
   if (chatDate.getTime() === today.getTime()) {
-    return "Today";
+    return "today";
   } else if (chatDate.getTime() === yesterday.getTime()) {
-    return "Yesterday";
+    return "yesterday";
   } else {
     return dateString;
   }
