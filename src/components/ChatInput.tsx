@@ -65,10 +65,10 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
               {Array.from(files).map((file, index) => (
                 <div
                   key={`${file.name}-${index}`}
-                  className="flex items-center justify-between rounded-xl border bg-gray-50 p-3"
+                  className="flex items-start justify-between rounded-xl border bg-gray-50 p-2 sm:items-center sm:p-3"
                 >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900">
+                  <div className="min-w-0 flex-1 pr-2">
+                    <p className="truncate text-xs font-medium text-gray-900 sm:text-sm">
                       {file.name}
                     </p>
                     <p className="text-xs text-gray-500">
@@ -78,24 +78,24 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="ml-2 h-6 w-6 p-0 hover:bg-gray-200"
+                    className="ml-1 h-5 w-5 flex-shrink-0 p-0 hover:bg-gray-200 sm:ml-2 sm:h-6 sm:w-6"
                     onClick={() => removeFile(index)}
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                 </div>
               ))}
             </div>
           )}
-          <div className="flex w-full justify-between">
+          <div className="flex w-full items-center justify-between gap-2">
             <Button
               variant="outline"
-              className="rounded-3xl"
+              className="rounded-3xl px-3 text-xs sm:px-4 sm:text-sm"
               disabled={input_modalities?.length === 1}
               onClick={() => fileInputRef.current?.click()}
             >
-              <Plus />
-              Upload files
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="ml-1 sm:ml-2">Upload files</span>
             </Button>
             <input
               type="file"
@@ -107,10 +107,10 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
             <Button
               onClick={() => onSubmit?.(content)}
               size="icon"
-              className="rounded-full"
+              className="h-8 w-8 flex-shrink-0 rounded-full sm:h-10 sm:w-10"
               disabled={!content.trim() && (!files || files.length === 0)}
             >
-              <Send />
+              <Send className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
           </div>
         </CardFooter>

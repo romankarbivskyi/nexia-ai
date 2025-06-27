@@ -103,7 +103,11 @@ export default function AppSidebar() {
       <SidebarContent className="overflow-hidden">
         <SidebarGroup>
           <SidebarGroupContent>
-            <Button className="w-full rounded-3xl" variant="default" asChild>
+            <Button
+              className="w-full rounded-3xl group-data-[collapsible=icon]:size-9"
+              variant="default"
+              asChild
+            >
               <Link href="/">
                 <Plus className="h-4 w-4" />
                 <span className="group-data-[collapsible=icon]:hidden">
