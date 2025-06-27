@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useModelStore } from "@/store/useModelStore";
 
 interface ChatInputProps {
-  onSubmit?: (content: string) => void;
+  onSubmit?: (content: string, files: FileList | null) => void;
 }
 
 export default function ChatInput({ onSubmit }: ChatInputProps) {
@@ -105,7 +105,7 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
               onChange={(e) => setFiles(e.target.files)}
             />
             <Button
-              onClick={() => onSubmit?.(content)}
+              onClick={() => onSubmit?.(content, files)}
               size="icon"
               className="h-8 w-8 flex-shrink-0 rounded-full sm:h-10 sm:w-10"
               disabled={!content.trim() && (!files || files.length === 0)}
