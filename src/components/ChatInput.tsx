@@ -13,6 +13,7 @@ interface ChatInputProps {
 export default function ChatInput({ onSubmit }: ChatInputProps) {
   const [content, setContent] = useState<string>("");
   const [files, setFiles] = useState<FileList | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { model } = useModelStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -105,10 +106,18 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
               onChange={(e) => setFiles(e.target.files)}
             />
             <Button
-              onClick={() => onSubmit?.(content, files)}
+              onClick={() => {
+                if (onSubmit) {
+                  setIsSubmitting(true);
+                  onSubmit(content, files);
+                }
+              }}
               size="icon"
               className="h-8 w-8 flex-shrink-0 rounded-full sm:h-10 sm:w-10"
-              disabled={!content.trim() && (!files || files.length === 0)}
+              disabled={
+                (!content.trim() && (!files || files.length === 0)) ||
+                isSubmitting
+              }
             >
               <Send className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>

@@ -78,4 +78,5 @@ export const createMessage = async ({
   }
 
   console.log("Message created successfully");
+  return { chatId };
 };

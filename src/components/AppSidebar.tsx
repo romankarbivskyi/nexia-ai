@@ -22,66 +22,64 @@ import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
-import { LogOut, Plus, Settings, User as UserIcon } from "lucide-react";
-import { redirect, useRouter } from "next/navigation";
-import { GroupedChats } from "@/types/chat";
+import {
+  LogOut,
+  Plus,
+  Settings,
+  User as UserIcon,
+  RefreshCw,
+} from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { formatDateLabel } from "@/utils/dateFormat";
 import Image from "next/image";
+import { useChatsStore } from "@/store/useChatsStore";
 
 export default function AppSidebar() {
-  const [user, setUser] = useState<User | null>();
-  const [chats, setChats] = useState<GroupedChats>();
+  const [user, setUser] = useState<User | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const { getChats, chats, refreshChats } = useChatsStore();
 
   const router = useRouter();
+  const pathname = usePathname();
   const supabase = createClient();
 
-  const getUser = async () => {
+  useEffect(() => {
+    initializeData();
+  }, []);
+
+  useEffect(() => {
+    if (user?.id && pathname.startsWith("/c/")) {
+      refreshChats(supabase, user.id);
+    }
+  }, [pathname, user?.id, refreshChats, supabase]);
+
+  const initializeData = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
-    setUser(user);
+    if (user) {
+      setUser(user);
+      await getChats(supabase, user.id);
+    }
   };
 
-  const getChats = async () => {
-    const { data, error } = await supabase
-      .from("chats")
-      .select("created_at, *")
-      .order("created_at", { ascending: false });
+  const handleManualRefresh = async () => {
+    if (!user?.id) return;
 
-    if (error) {
-      console.error("Error fetching chats:", error);
-    } else {
-      const groupedChats = data.reduce((acc, chat) => {
-        const date = new Date(chat.created_at).toISOString().split("T")[0];
-        if (!acc[date]) {
-          acc[date] = [];
-        }
-        acc[date].push(chat);
-        return acc;
-      }, {});
-
-      const sortedGroupedChats = Object.keys(groupedChats)
-        .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-        .reduce((acc, key) => {
-          acc[key] = groupedChats[key];
-          return acc;
-        }, {});
-
-      setChats(sortedGroupedChats);
+    setIsRefreshing(true);
+    try {
+      await refreshChats(supabase, user.id);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    await redirect("/sign-in");
+    router.push("/auth/sign-in");
   };
-
-  useEffect(() => {
-    getUser();
-    getChats();
-  }, []);
 
   const getInitials = (name: string) => {
     return (
@@ -108,49 +106,53 @@ export default function AppSidebar() {
           NexiaAI
         </h1>
       </SidebarHeader>
-      <SidebarContent className="overflow-hidden">
+
+      <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <Button
-              className="w-full rounded-3xl group-data-[collapsible=icon]:size-9"
-              variant="default"
-              asChild
-            >
-              <Link href="/">
-                <Plus className="h-4 w-4" />
-                <span className="group-data-[collapsible=icon]:hidden">
-                  New Chat
-                </span>
-              </Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button className="flex-1" variant="default" asChild>
+                <Link href="/">
+                  <Plus className="h-4 w-4" />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    New Chat
+                  </span>
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleManualRefresh}
+                disabled={isRefreshing}
+                className="group-data-[collapsible=icon]:hidden"
+              >
+                <RefreshCw
+                  className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+                />
+              </Button>
+            </div>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {chats && Object.keys(chats).length > 0 ? (
-          Object.entries(chats).map(([key, value]) => (
-            <SidebarGroup key={key}>
+          Object.entries(chats).map(([date, chatList]) => (
+            <SidebarGroup key={date}>
               <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">
-                {formatDateLabel(key)}
+                {formatDateLabel(date)}
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {value
-                    .sort(
-                      (a, b) =>
-                        new Date(b.created_at).getTime() -
-                        new Date(a.created_at).getTime(),
-                    )
-                    .map((item) => (
-                      <SidebarMenuItem key={item.id}>
-                        <SidebarMenuButton asChild>
-                          <Link href={`/c/${item.id}`}>
-                            <span className="group-data-[collapsible=icon]:hidden">
-                              {item.title || "Untitled Chat"}
-                            </span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
+                  {chatList.map((chat) => (
+                    <SidebarMenuItem key={chat.id}>
+                      <SidebarMenuButton asChild>
+                        <Link href={`/c/${chat.id}`}>
+                          <span className="group-data-[collapsible=icon]:hidden">
+                            {chat.title || "Untitled Chat"}
+                          </span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -161,13 +163,11 @@ export default function AppSidebar() {
           </div>
         )}
       </SidebarContent>
+
       <SidebarFooter>
         <Popover>
           <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              className="h-auto w-full justify-start p-0 py-2"
-            >
+            <Button variant="ghost" className="h-auto w-full justify-start p-2">
               <Avatar className="mr-2 h-8 w-8 rounded-full group-data-[collapsible=icon]:mr-0">
                 <AvatarImage
                   src={user?.user_metadata?.avatar_url}
@@ -192,32 +192,32 @@ export default function AppSidebar() {
           <PopoverContent
             side="top"
             align="start"
-            className="w-min rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
+            className="w-64 rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
             sideOffset={8}
           >
             <Button
               variant="ghost"
-              className="w-full justify-start rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+              className="w-full justify-start text-sm"
               onClick={() => router.push("/settings")}
             >
-              <Settings className="mr-3 h-4 w-4" />
-              Account Settings
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
             </Button>
             <Button
               variant="ghost"
-              className="w-full justify-start rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+              className="w-full justify-start text-sm"
               onClick={() => router.push("/profile")}
             >
-              <UserIcon className="mr-3 h-4 w-4" />
-              View Profile
+              <UserIcon className="mr-2 h-4 w-4" />
+              Profile
             </Button>
             <Button
               variant="ghost"
-              className="w-full justify-start rounded-md text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700"
+              className="w-full justify-start text-sm text-red-600 hover:bg-red-50"
               onClick={handleSignOut}
             >
-              <LogOut className="mr-3 h-4 w-4" />
-              Log out
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
             </Button>
           </PopoverContent>
         </Popover>
