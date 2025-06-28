@@ -26,7 +26,7 @@ export const createMessage = async ({
       Array.from(files).map(async (file) => {
         const { data: uploadData, error } = await supabase.storage
           .from("uploads")
-          .upload(`${user.id}/${uuidv4()}`, file, {
+          .upload(`${user.id}/${uuidv4()}.${file.name.split(".")[1]}`, file, {
             cacheControl: "3600",
             upsert: false,
           });

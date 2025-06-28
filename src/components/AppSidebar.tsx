@@ -111,7 +111,11 @@ export default function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <div className="flex gap-2">
-              <Button className="flex-1" variant="default" asChild>
+              <Button
+                className="flex-1 group-data-[collapsible=icon]:p-0"
+                variant="default"
+                asChild
+              >
                 <Link href="/">
                   <Plus className="h-4 w-4" />
                   <span className="group-data-[collapsible=icon]:hidden">
@@ -167,7 +171,10 @@ export default function AppSidebar() {
       <SidebarFooter>
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="ghost" className="h-auto w-full justify-start p-2">
+            <Button
+              variant="ghost"
+              className="h-auto w-full justify-start p-2 group-data-[collapsible=icon]:px-0"
+            >
               <Avatar className="mr-2 h-8 w-8 rounded-full group-data-[collapsible=icon]:mr-0">
                 <AvatarImage
                   src={user?.user_metadata?.avatar_url}

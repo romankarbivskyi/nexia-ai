@@ -19,10 +19,12 @@ export default function Page() {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const { chatId } = await createMessage({
+    const messageResult = await createMessage({
       content,
       files,
     });
+
+    const chatId = messageResult?.chatId;
 
     if (!user || !chatId) return;
 
