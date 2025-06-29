@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/select";
 import { useModelStore } from "@/store/useModelStore";
 import { Model } from "@/types/model";
+import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 
 const DEFAULT_MODEL = "openai";
@@ -15,24 +16,18 @@ export default function ModelSelect() {
   const [models, setModels] = useState<Model[]>([]);
   const { setModel } = useModelStore();
 
-  const getModels = () => {
-    fetch("https://text.pollinations.ai/models", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((models) => {
-        const textOnlyModels = models.filter((m) => m.audio === false);
-        setModels(textOnlyModels);
-        setModel(textOnlyModels.find((m) => m.name == DEFAULT_MODEL));
-        console.log(models);
-      });
+  const getModels = async () => {
+    const supabase = createClient();
+
+    const { data, error } = await supabase.from("models").select();
+
+    if (error) {
+      console.log("Error fetching models:", error);
+      return;
+    }
+
+    setModels(data);
+    setModel(data.find((m) => m.name == DEFAULT_MODEL));
   };
 
   const handleModelChange = (value: string) => {
@@ -52,10 +47,10 @@ export default function ModelSelect() {
 
   return (
     <Select defaultValue={DEFAULT_MODEL} onValueChange={handleModelChange}>
-      <SelectTrigger className="bg-background m-2 w-[180px]">
+      <SelectTrigger className="bg-background m-2 w-[180px] rounded-2xl">
         <SelectValue placeholder="Model" />
       </SelectTrigger>
-      <SelectContent className="max-w-min">
+      <SelectContent className="max-w-min rounded-2xl">
         {models.map((model) => (
           <SelectItem value={model.name} key={model.name}>
             {model.description}

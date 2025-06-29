@@ -1,14 +1,36 @@
-import { ReactNode } from "react";
+import { Message as IMessage } from "@/types/message";
+import Message from "./Message";
 
 interface MessagesProps {
-  children: ReactNode;
+  messages: IMessage[];
+  isLoading?: boolean;
 }
 
-export default function Messages({ children }: MessagesProps) {
+export default function Messages({ messages, isLoading }: MessagesProps) {
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="mx-auto max-w-3xl px-4 py-4">
-        <div className="flex flex-col gap-4">{children}</div>
+    <div className="mx-auto max-w-3xl px-4 py-4">
+      <div className="flex flex-col gap-4">
+        {messages && messages.length > 0 ? (
+          messages.map(({ id, content, role }) => (
+            <Message key={id} content={content} role={role} />
+          ))
+        ) : (
+          <div className="flex flex-1 items-center justify-center text-gray-500">
+            <p>Start a conversation by typing a message below.</p>
+          </div>
+        )}
+        {isLoading && (
+          <div className="flex-1 rounded-lg bg-gray-50 p-3">
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.3s]"></div>
+                <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.15s]"></div>
+                <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400"></div>
+              </div>
+              <span className="text-sm text-gray-500">AI is typing...</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

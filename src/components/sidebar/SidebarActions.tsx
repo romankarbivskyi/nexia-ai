@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Plus, RefreshCw } from "lucide-react";
-import { SidebarGroup, SidebarGroupContent } from "./ui/sidebar";
+import { SidebarGroup, SidebarGroupContent } from "../ui/sidebar";
 
 interface SidebarActionsProps {
   onRefresh: () => Promise<void>;

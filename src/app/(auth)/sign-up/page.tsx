@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { signUpWithPassword } from "./actions";
+import { signUpWithPassword } from "@/actions/auth";
 import { toast } from "sonner";
 import { signUpSchema } from "@/schemas/auth";
 

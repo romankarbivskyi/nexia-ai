@@ -4,6 +4,5 @@ export interface Message {
   role: string;
   content: string;
   chat_id: string;
-  user_id: string;
-  files: string[];
+  user_id: string | null;
 }

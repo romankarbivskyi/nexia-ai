@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { LogOut, Settings, User as UserIcon } from "lucide-react";
 import {
@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@radix-ui/react-popover";
-import { SidebarFooter } from "./ui/sidebar";
+import { SidebarFooter } from "../ui/sidebar";
 import { User } from "@supabase/supabase-js";
 
 interface SidebarUserMenuProps {

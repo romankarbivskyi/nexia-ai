@@ -1,7 +1,7 @@
 "use client";
 
+import { createChat } from "@/actions/chat";
 import ChatInput from "@/components/ChatInput";
-import { createMessage } from "./actions";
 import { useChatsStore } from "@/store/useChatsStore";
 import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
@@ -9,20 +9,14 @@ import { redirect } from "next/navigation";
 export default function Page() {
   const { refreshChats, setActiveChat } = useChatsStore();
 
-  const handleChatCreation = async (
-    content: string,
-    files: FileList | null,
-  ) => {
+  const handleChatCreation = async (content: string) => {
     const supabase = await createClient();
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const messageResult = await createMessage({
-      content,
-      files,
-    });
+    const messageResult = await createChat(content);
 
     const chatId = messageResult?.chatId;
 

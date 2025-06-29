@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import {
   Popover,
   PopoverTrigger,

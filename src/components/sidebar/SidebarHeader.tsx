@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { SidebarHeader } from "./ui/sidebar";
+import { SidebarHeader } from "../ui/sidebar";
 
 export default function AppSidebarHeader() {
   return (

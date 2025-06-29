@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { signInWithGoogle, signInWithPassword } from "./actions";
+import { signInWithGoogle, signInWithPassword } from "@/actions/auth";
 import { toast } from "sonner";
 import { signInSchema } from "@/schemas/auth";
 
