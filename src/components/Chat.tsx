@@ -19,6 +19,7 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const processedInitialMessage = useRef(false);
 
   const { activeModel } = useModelStore();
 
@@ -57,18 +58,42 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
   );
 
   const handleChatInput = async (content: string) => {
+    const tempUserMessage: Message = {
+      id: `temp-${Date.now()}`,
+      content,
+      role: "user",
+      created_at: new Date().toLocaleDateString(),
+      chat_id: chatId,
+      user_id: null,
+    };
+
+    setMessages((prevMessages) => [...prevMessages, tempUserMessage]);
     setIsLoading(true);
+
     try {
       const result = await createMessage("user", content, chatId);
 
       if (result && result.message) {
+        setMessages((prevMessages) => {
+          const filteredMessages = prevMessages.filter(
+            (msg) => msg.id !== tempUserMessage.id,
+          );
+          return [...filteredMessages, result.message];
+        });
+
         const updatedMessages = [...messages, result.message];
-        setMessages(updatedMessages);
         await getContent(updatedMessages);
       } else {
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg.id !== tempUserMessage.id),
+        );
         toast.error("Failed to create message.");
       }
     } catch (err: unknown) {
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg.id !== tempUserMessage.id),
+      );
+
       if (err instanceof Error) {
         toast.error(
           err.message || "An error occurred while creating a message",
@@ -80,9 +105,15 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
   };
 
   useEffect(() => {
-    if (isLoading) return;
+    if (
+      messages &&
+      messages.length === 1 &&
+      messages[0].role === "user" &&
+      !isLoading &&
+      !processedInitialMessage.current
+    ) {
+      processedInitialMessage.current = true;
 
-    if (messages && messages.length === 1 && messages[0].role === "user") {
       const handleInitialMessage = async () => {
         setIsLoading(true);
         try {
@@ -93,7 +124,7 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
       };
       handleInitialMessage();
     }
-  }, [messages, isLoading, getContent]);
+  }, [messages, isLoading]);
 
   return (
     <div className="flex h-screen w-full flex-col">
