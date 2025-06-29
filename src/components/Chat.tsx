@@ -20,7 +20,7 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const { model } = useModelStore();
+  const { activeModel } = useModelStore();
 
   const params = useParams();
   const chatId = params.chatId as string;
@@ -34,7 +34,10 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
   const getContent = useCallback(
     async (currentMessages: Message[]) => {
       try {
-        const content = await generateContent(currentMessages, model?.name);
+        const content = await generateContent(
+          currentMessages,
+          activeModel?.name,
+        );
         const result = await createMessage("assistant", content, chatId);
 
         if (result && result.message) {
@@ -50,7 +53,7 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
         toast.error("Failed to generate response.");
       }
     },
-    [chatId, model?.name],
+    [chatId, activeModel?.name],
   );
 
   const handleChatInput = async (content: string) => {

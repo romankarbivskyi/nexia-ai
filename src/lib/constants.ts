@@ -18,3 +18,5 @@ If the user's prompt is very simple, you may enhance it with descriptive details
 
 When returning the image, always add a short description as the alt text in the Markdown image syntax, describing the generated image.
 `;
+
+export const DEFAULT_MODEL = "openai";
