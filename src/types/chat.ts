@@ -4,7 +4,3 @@ export interface Chat {
   title: string;
   user_id: string;
 }
-
-export interface GroupedChats {
-  [date: string]: Chat[];
-}
