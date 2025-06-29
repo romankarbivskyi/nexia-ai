@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 interface MessageProps {
   content: string;
@@ -20,11 +21,12 @@ export default function Message({ content, role }: MessageProps) {
         )}
       >
         <ReactMarkdown
+          rehypePlugins={[rehypeRaw]}
           components={{
             p: ({ children }) => (
               <p className="mb-2 leading-relaxed last:mb-0">{children}</p>
             ),
-            code: ({ node, className, children, ...props }) => {
+            code: ({ className, children, ...props }) => {
               const isInline = !className;
               return isInline ? (
                 <code
@@ -124,6 +126,9 @@ export default function Message({ content, role }: MessageProps) {
               >
                 {children}
               </td>
+            ),
+            img: ({ ...props }) => (
+              <img {...props} className="h-auto max-w-xs rounded-lg" />
             ),
           }}
         >

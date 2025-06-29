@@ -9,6 +9,8 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { Message as MessageType } from "@/types/message";
 import { createMessage } from "../../actions";
 import { useParams } from "next/navigation";
+import { toast } from "sonner";
+import { DEFAULT_SYSTEM_PROMPT } from "@/lib/constants";
 
 export default function Page() {
   const { chatId } = useParams<{ chatId: string }>();
@@ -91,6 +93,7 @@ export default function Page() {
   const callPollinationsAPI = useCallback(
     async (content: string) => {
       if (!model?.name) {
+        toast.error("No model selected");
         console.error("No model selected");
         return;
       }
@@ -105,6 +108,10 @@ export default function Page() {
           body: JSON.stringify({
             model: model.name,
             messages: [
+              {
+                role: "system",
+                content: DEFAULT_SYSTEM_PROMPT,
+              },
               ...(messages && messages.length > 1
                 ? messages.map(({ role, content }) => ({
                     role,
@@ -116,6 +123,8 @@ export default function Page() {
                 content,
               },
             ],
+            private: true,
+            seed: Math.floor(Math.random() * 900) + 100,
           }),
         });
 
@@ -152,8 +161,8 @@ export default function Page() {
   useEffect(() => {
     if (isLoading) return;
 
-    if (messages && messages.length === 1 && messages[0].role === "user") {
-      callPollinationsAPI(messages[0].content);
+    if (messages && messages[messages.length - 1]?.role === "user") {
+      callPollinationsAPI(messages[messages.length - 1].content);
     }
   }, [messages, callPollinationsAPI, isLoading]);
 
@@ -173,6 +182,7 @@ export default function Page() {
 
       await callPollinationsAPI(content);
     } catch (error) {
+      toast.error("Error handling chat input");
       console.error("Error handling chat input:", error);
     } finally {
       setIsLoading(false);

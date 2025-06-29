@@ -11,10 +11,7 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 
 const formSchema = z.object({
-  content: z
-    .string()
-    .min(1, "Message cannot be empty")
-    .max(4000, "Message is too long"),
+  content: z.string().max(4000, "Message is too long"),
 });
 
 interface ChatInputProps {
