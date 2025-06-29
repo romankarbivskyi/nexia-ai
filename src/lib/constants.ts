@@ -18,3 +18,12 @@ If the user's prompt is very simple, you may enhance it with descriptive details
 
 When returning the image, always add a short description as the alt text in the Markdown image syntax, describing the generated image.
 `;
+
+export const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
+
+export const ACCEPTED_AUDIO_TYPES = ["audio/wav", "audio/mp3"];

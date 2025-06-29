@@ -24,9 +24,12 @@ export const createMessage = async ({
   if (files) {
     file_urls = await Promise.all(
       Array.from(files).map(async (file) => {
+        const fileExtension = file.name.split(".")[1];
+        const fileType = file.type.split("/")[0];
+
         const { data: uploadData, error } = await supabase.storage
           .from("uploads")
-          .upload(`${user.id}/${uuidv4()}.${file.name.split(".")[1]}`, file, {
+          .upload(`${user.id}/${fileType}_${uuidv4()}.${fileExtension}`, file, {
             cacheControl: "3600",
             upsert: false,
           });
