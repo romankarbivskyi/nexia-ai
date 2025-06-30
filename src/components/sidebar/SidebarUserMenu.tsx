@@ -10,17 +10,16 @@ import {
 } from "@radix-ui/react-popover";
 import { SidebarFooter } from "../ui/sidebar";
 import { User } from "@supabase/supabase-js";
+import { useModalStore } from "@/store/useModalStore";
 
 interface SidebarUserMenuProps {
   user: User | null;
   onSignOut: () => Promise<void>;
-  onNavigate: (path: string) => void;
 }
 
 export default function SidebarUserMenu({
   user,
   onSignOut,
-  onNavigate,
 }: SidebarUserMenuProps) {
   const getInitials = (name: string) => {
     return (
@@ -32,6 +31,8 @@ export default function SidebarUserMenu({
         .slice(0, 2) || "U"
     );
   };
+
+  const { openModal } = useModalStore();
 
   return (
     <SidebarFooter>
@@ -71,7 +72,7 @@ export default function SidebarUserMenu({
           <Button
             variant="ghost"
             className="w-full justify-start text-sm"
-            onClick={() => onNavigate("/settings")}
+            onClick={() => openModal("settings", { defaultTab: "general" })}
           >
             <Settings className="mr-2 h-4 w-4" />
             Settings
@@ -79,7 +80,7 @@ export default function SidebarUserMenu({
           <Button
             variant="ghost"
             className="w-full justify-start text-sm"
-            onClick={() => onNavigate("/profile")}
+            onClick={() => openModal("settings", { defaultTab: "profile" })}
           >
             <UserIcon className="mr-2 h-4 w-4" />
             Profile

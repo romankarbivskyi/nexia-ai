@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/sidebar";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
 import { useRouter, usePathname } from "next/navigation";
 import { useChatsStore } from "@/store/useChatsStore";
 
@@ -18,12 +17,13 @@ import AppSidebarHeader from "./SidebarHeader";
 import SidebarActions from "./SidebarActions";
 import SidebarChatItem from "./SidebarChatItem";
 import SidebarUserMenu from "./SidebarUserMenu";
+import { useUserStore } from "@/store/useUserStore";
 
 export default function AppSidebar() {
-  const [user, setUser] = useState<User | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const { getChats, chats, refreshChats } = useChatsStore();
+  const { user } = useUserStore();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -32,24 +32,16 @@ export default function AppSidebar() {
   const currentChatId = pathname.split("/c/")[1];
 
   useEffect(() => {
-    initializeData();
-  }, []);
+    if (user) {
+      getChats(supabase, user.id);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user?.id && pathname.startsWith("/c/")) {
       refreshChats(supabase, user.id);
     }
   }, [pathname, user?.id, refreshChats, supabase]);
-
-  const initializeData = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
-      setUser(user);
-      await getChats(supabase, user.id);
-    }
-  };
 
   const handleManualRefresh = async () => {
     if (!user?.id) return;
@@ -114,10 +106,6 @@ export default function AppSidebar() {
     router.push("/sign-in");
   };
 
-  const handleNavigate = (path: string) => {
-    router.push(path);
-  };
-
   return (
     <Sidebar collapsible="icon">
       <AppSidebarHeader />
@@ -154,11 +142,7 @@ export default function AppSidebar() {
         )}
       </SidebarContent>
 
-      <SidebarUserMenu
-        user={user}
-        onSignOut={handleSignOut}
-        onNavigate={handleNavigate}
-      />
+      <SidebarUserMenu user={user} onSignOut={handleSignOut} />
     </Sidebar>
   );
 }

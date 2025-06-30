@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import Modal from "@/components/Modal";
 
 export const metadata: Metadata = {
   title: "Nexia AI - Free Multi-Model AI Chat & Image Generation",
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body>
         <main>{children}</main>
         <Toaster />
+        <Modal />
       </body>
     </html>
   );

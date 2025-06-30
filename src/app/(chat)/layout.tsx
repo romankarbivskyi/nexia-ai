@@ -4,15 +4,17 @@ import AppSidebar from "@/components/sidebar/AppSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DEFAULT_MODEL } from "@/lib/constants";
 import { useModelStore } from "@/store/useModelStore";
+import { useUserStore } from "@/store/useUserStore";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { setModels, setActiveModel } = useModelStore();
+  const { setUser } = useUserStore();
+
+  const supabase = createClient();
 
   const getModels = async () => {
-    const supabase = createClient();
-
     const { data, error } = await supabase.from("models").select();
 
     if (error) {
@@ -24,8 +26,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     setActiveModel(data.find((m) => m.name === DEFAULT_MODEL) ?? null);
   };
 
+  const getUser = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      console.log("No user found");
+      return;
+    }
+
+    setUser(user);
+  };
+
   useEffect(() => {
     getModels();
+    getUser();
   }, []);
 
   return (
