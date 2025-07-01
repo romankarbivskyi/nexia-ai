@@ -1,5 +1,6 @@
 import Chat from "@/components/Chat";
 import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function Page({
   params,
@@ -10,16 +11,36 @@ export default async function Page({
 
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/sing-in");
+  }
+
+  const { data: chatData, error: chatError } = await supabase
+    .from("chats")
+    .select()
+    .eq("chat_id", chatId)
+    .eq("user_id", user.id);
+
+  if (chatError || !chatData) {
+    console.log("Error fetching chat:", chatError);
+    redirect("/");
+  }
+
+  const { data: messagesData, error: messagesError } = await supabase
     .from("messages")
     .select()
     .eq("chat_id", chatId)
+    .eq("user_id", user.id)
     .order("created_at", { ascending: true });
 
-  if (error || !data) {
-    console.log("Error fetching messages:", error);
-    return;
+  if (messagesError) {
+    console.log("Error fetching messages:", messagesError);
+    redirect("/");
   }
 
-  return <Chat initialMessages={data || []} />;
+  return <Chat initialMessages={messagesData || []} />;
 }

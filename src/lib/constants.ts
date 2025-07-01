@@ -6,6 +6,8 @@ To generate an image, return the following URL to the user, replacing {prompt} w
 
 http://image.pollinations.ai/prompt/{prompt}?nologo=true
 
+The ?nologo=true parameter is important and must always be included in the URL to ensure the image does not contain a logo.
+
 You may also include optional width and height parameters in the URL by adding &width={width}&height={height}, where {width} and {height} are the desired dimensions in pixels. For example:
 
 http://image.pollinations.ai/prompt/{prompt}?nologo=true&width=512&height=512

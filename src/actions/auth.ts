@@ -1,40 +1,89 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { signInSchema } from "@/schemas/auth";
+import { signInSchema, signUpSchema } from "@/schemas/auth";
 import { createClient } from "@/utils/supabase/server";
-import { AuthError } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 
-export const signInWithPassword = async (email: string, password: string) => {
-  const supabase = await createClient();
+interface AuthResult {
+  message?: string;
+  success: boolean;
+  data?: any;
+  error?: string;
+}
 
-  const result = signInSchema.safeParse({
-    email,
-    password,
-  });
+export const signInWithPassword = async (
+  email: string,
+  password: string,
+): Promise<AuthResult> => {
+  try {
+    const supabase = await createClient();
 
-  if (!result.success) {
+    const result = signInSchema.safeParse({ email, password });
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error.errors[0]?.message || "Invalid input",
+      };
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    redirect("/");
+  } catch (error) {
     return {
-      data: {
-        user: null,
-        session: null,
-      },
-      error: new AuthError("Invalid input"),
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
+};
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+export const signUpWithPassword = async (
+  email: string,
+  password: string,
+  confirmPassword: string,
+): Promise<AuthResult> => {
+  try {
+    const supabase = await createClient();
 
-  if (error) {
-    console.log(error);
-    return error;
-  }
+    const result = signUpSchema.safeParse({
+      email,
+      password,
+      confirmPassword,
+    });
 
-  if (data) {
-    await redirect("/");
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error.errors[0]?.message || "Invalid input",
+      };
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 };
 
@@ -44,13 +93,12 @@ export const signInWithGoogle = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "http://localhost:3000/auth/callback",
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
     },
   });
 
   if (error) {
-    console.log(error);
-    return error;
+    throw new Error(error.message);
   }
 
   if (data.url) {
@@ -58,40 +106,13 @@ export const signInWithGoogle = async () => {
   }
 };
 
-export const signUpWithPassword = async (
-  email: string,
-  password: string,
-  confirmPassword: string,
-) => {
+export const signOut = async () => {
   const supabase = await createClient();
-
-  const result = signUpSchema.safeParse({
-    email,
-    password,
-    confirmPassword,
-  });
-
-  if (!result.success) {
-    return {
-      data: {
-        user: null,
-        session: null,
-      },
-      error: new AuthError("Invalid input"),
-    };
-  }
-
-  const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: password,
-    options: {
-      emailRedirectTo: "http://localhost:3000/auth/callback",
-    },
-  });
+  const { error } = await supabase.auth.signOut();
 
   if (error) {
-    console.log(error);
+    throw new Error(error.message);
   }
 
-  return { data, error };
+  redirect("/sing-in");
 };

@@ -41,13 +41,13 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
         );
         const result = await createMessage("assistant", content, chatId);
 
-        if (result && result.message) {
+        if (result.success && result.data?.message) {
           setMessages((previosMessages) => [
             ...previosMessages,
-            result.message,
+            result.data?.message,
           ]);
         } else {
-          toast.error("Failed to create message.");
+          toast.error(result.error || "Failed to create message.");
         }
       } catch (err) {
         console.error("Error generation content:", err);
@@ -62,7 +62,7 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
       id: `temp-${Date.now()}`,
       content,
       role: "user",
-      created_at: new Date().toLocaleDateString(),
+      created_at: new Date().toISOString(),
       chat_id: chatId,
       user_id: null,
     };
@@ -73,21 +73,21 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
     try {
       const result = await createMessage("user", content, chatId);
 
-      if (result && result.message) {
+      if (result.success && result.data?.message) {
         setMessages((prevMessages) => {
           const filteredMessages = prevMessages.filter(
             (msg) => msg.id !== tempUserMessage.id,
           );
-          return [...filteredMessages, result.message];
+          return [...filteredMessages, result.data?.message];
         });
 
-        const updatedMessages = [...messages, result.message];
+        const updatedMessages = [...messages, result.data.message];
         await getContent(updatedMessages);
       } else {
         setMessages((prevMessages) =>
           prevMessages.filter((msg) => msg.id !== tempUserMessage.id),
         );
-        toast.error("Failed to create message.");
+        toast.error(result.error || "Failed to create message.");
       }
     } catch (err: unknown) {
       setMessages((prevMessages) =>
@@ -98,6 +98,8 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
         toast.error(
           err.message || "An error occurred while creating a message",
         );
+      } else {
+        toast.error("An unexpected error occurred");
       }
     } finally {
       setIsLoading(false);

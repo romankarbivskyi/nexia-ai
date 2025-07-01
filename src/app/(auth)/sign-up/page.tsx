@@ -43,7 +43,7 @@ export default function Page() {
     );
 
     if (error) {
-      toast.error(error.message || "Failed to sign in. Please try again.");
+      toast.error(error || "Failed to sign in. Please try again.");
     }
 
     if (!data.session) {
