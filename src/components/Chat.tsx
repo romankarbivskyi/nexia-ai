@@ -131,7 +131,7 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
   return (
     <div className="flex h-screen w-full flex-col">
       <div className="flex-1 overflow-y-auto">
-        <Messages messages={messages} isLoading={isLoading} />
+        <Messages messages={messages} isLoading={isLoading} isFailed={false} />
         <div ref={bottomRef}></div>
       </div>
 
