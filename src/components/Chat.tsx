@@ -45,7 +45,7 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
         if (result.success && result.data?.message) {
           setMessages((previousMessages) => [
             ...previousMessages,
-            result.data.message,
+            result.data?.message,
           ]);
           setIsFailed(false);
         } else {
@@ -84,7 +84,7 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
           const filteredMessages = prevMessages.filter(
             (msg) => msg.id !== tempUserMessage.id,
           );
-          return [...filteredMessages, result.data.message];
+          return [...filteredMessages, result.data?.message];
         });
 
         const currentMessages = messages.filter(
