@@ -80,7 +80,7 @@ export default function ChatInput({
                 )}
               />
             </CardContent>
-            <CardFooter className="flex justify-between">
+            <CardFooter className="flex justify-between px-2">
               <ModelSelect />
 
               <Button

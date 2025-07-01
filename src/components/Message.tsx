@@ -13,13 +13,17 @@ export default function Message({ content, role }: MessageProps) {
     <div className="flex w-full">
       <div
         className={cn(
-          "word-wrap overflow-wrap-anywhere max-w-full rounded-xl border px-4 py-3 text-sm break-words sm:text-base",
+          "overflow-hidden rounded-xl border px-3 py-2 text-sm sm:px-4 sm:py-3 sm:text-base",
+          "max-w-[85%] sm:max-w-[75%] md:max-w-[70%] lg:max-w-[65%]",
+          "overflow-wrap-anywhere min-w-0 break-words",
           role === "user"
-            ? "ml-auto self-end bg-blue-500 text-white"
-            : "bg-card mr-auto self-start text-gray-900",
+            ? "bg-primary text-primary-foreground ml-auto self-end"
+            : "bg-card text-foreground border-border mr-auto self-start",
         )}
       >
-        <Markdown>{content}</Markdown>
+        <div className="max-w-full min-w-0">
+          <Markdown>{content}</Markdown>
+        </div>
       </div>
     </div>
   );

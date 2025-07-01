@@ -43,15 +43,19 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
         const result = await createMessage("assistant", content, chatId);
 
         if (result.success && result.data?.message) {
-          setMessages((previosMessages) => [
-            ...previosMessages,
-            result.data?.message,
+          setMessages((previousMessages) => [
+            ...previousMessages,
+            result.data.message,
           ]);
+          setIsFailed(false);
         } else {
           setIsFailed(true);
+          toast.error(result.error || "Failed to generate response.");
         }
-      } catch {
+      } catch (error) {
+        console.error("Error generating content:", error);
         setIsFailed(true);
+        toast.error("Failed to generate response.");
       }
     },
     [chatId, activeModel?.name],
@@ -80,10 +84,14 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
           const filteredMessages = prevMessages.filter(
             (msg) => msg.id !== tempUserMessage.id,
           );
-          return [...filteredMessages, result.data?.message];
+          return [...filteredMessages, result.data.message];
         });
 
-        const updatedMessages = [...messages, result.data.message];
+        const currentMessages = messages.filter(
+          (msg) => msg.id !== tempUserMessage.id,
+        );
+        const updatedMessages = [...currentMessages, result.data.message];
+
         await getContent(updatedMessages);
       } else {
         setMessages((prevMessages) =>
@@ -110,8 +118,14 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
 
   const onRegenerate = useCallback(async () => {
     if (isFailed) setIsFailed(false);
-    await getContent(messages);
-  }, [getContent, messages]);
+    setIsLoading(true);
+
+    try {
+      await getContent(messages);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getContent, messages, isFailed]);
 
   useEffect(() => {
     if (
@@ -133,22 +147,22 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
       };
       handleInitialMessage();
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, getContent]);
 
   return (
-    <div className="flex h-screen w-full flex-col">
-      <div className="flex-1 overflow-y-auto">
+    <div className="flex h-screen w-full flex-col overflow-hidden">
+      <div className="flex-1 overflow-x-hidden overflow-y-auto">
         <Messages
           messages={messages}
           isLoading={isLoading}
           isFailed={isFailed}
           handleRegenerate={onRegenerate}
         />
-        <div ref={bottomRef}></div>
+        <div ref={bottomRef} className="h-4" />
       </div>
 
-      <div className="border-t p-4">
-        <div className="mx-auto max-w-3xl">
+      <div className="border-border bg-background flex-shrink-0 border-t p-2 sm:p-4">
+        <div className="mx-auto w-full max-w-3xl">
           <ChatInput onSubmit={handleChatInput} disabled={isLoading} />
         </div>
       </div>
