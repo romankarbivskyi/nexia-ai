@@ -114,5 +114,5 @@ export const signOut = async () => {
     throw new Error(error.message);
   }
 
-  redirect("/sing-in");
+  redirect("/sign-in");
 };
