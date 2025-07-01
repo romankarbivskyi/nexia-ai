@@ -8,12 +8,14 @@ interface MessagesProps {
   messages: IMessage[];
   isLoading?: boolean;
   isFailed?: boolean;
+  handleRegenerate?: () => void;
 }
 
 export default function Messages({
   messages,
   isLoading,
   isFailed,
+  handleRegenerate,
 }: MessagesProps) {
   return (
     <div className="mx-auto max-w-3xl px-4 py-4">
@@ -50,6 +52,7 @@ export default function Messages({
               variant="outline"
               size="sm"
               className="!border-destructive hover:!border-accent-foreground w-min"
+              onClick={handleRegenerate}
             >
               Regenerate
             </Button>

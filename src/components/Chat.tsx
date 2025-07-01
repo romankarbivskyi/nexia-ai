@@ -17,6 +17,7 @@ interface ChatProps {
 export default function Chat({ initialMessages = [] }: ChatProps) {
   const [messages, setMessages] = useState(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const processedInitialMessage = useRef(false);
@@ -47,17 +48,18 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
             result.data?.message,
           ]);
         } else {
-          toast.error(result.error || "Failed to create message.");
+          setIsFailed(true);
         }
-      } catch (err) {
-        console.error("Error generation content:", err);
-        toast.error("Failed to generate response.");
+      } catch {
+        setIsFailed(true);
       }
     },
     [chatId, activeModel?.name],
   );
 
   const handleChatInput = async (content: string) => {
+    if (isFailed) setIsFailed(false);
+
     const tempUserMessage: Message = {
       id: `temp-${Date.now()}`,
       content,
@@ -106,6 +108,11 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
     }
   };
 
+  const onRegenerate = useCallback(async () => {
+    if (isFailed) setIsFailed(false);
+    await getContent(messages);
+  }, [getContent, messages]);
+
   useEffect(() => {
     if (
       messages &&
@@ -131,7 +138,12 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
   return (
     <div className="flex h-screen w-full flex-col">
       <div className="flex-1 overflow-y-auto">
-        <Messages messages={messages} isLoading={isLoading} isFailed={false} />
+        <Messages
+          messages={messages}
+          isLoading={isLoading}
+          isFailed={isFailed}
+          handleRegenerate={onRegenerate}
+        />
         <div ref={bottomRef}></div>
       </div>
 
