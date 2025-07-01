@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import CodeBlock from "./CodeBlock";
 
 interface MarkdownProps {
   children: string;
@@ -17,41 +18,9 @@ export default function Markdown({ children }: MarkdownProps) {
               {children}
             </p>
           ),
-          code: ({ className, children, ...props }) => {
-            const isInline = !className;
-            return isInline ? (
-              <code
-                className={cn(
-                  "rounded px-1 py-0.5 font-mono text-xs sm:text-sm",
-                  "bg-muted text-muted-foreground",
-                  "overflow-wrap-anywhere break-all",
-                )}
-                {...props}
-              >
-                {children}
-              </code>
-            ) : (
-              <code
-                className="font-mono text-xs break-all whitespace-pre-wrap sm:text-sm"
-                {...props}
-              >
-                {children}
-              </code>
-            );
-          },
+          code: CodeBlock,
           pre: ({ children }) => (
-            <pre
-              className={cn(
-                "overflow-x-auto rounded-lg p-2 text-xs sm:p-3 sm:text-sm",
-                "my-2 max-w-full sm:my-3",
-                "bg-muted text-muted-foreground",
-                "border-border border",
-                "break-words whitespace-pre-wrap",
-                "scrollbar-thin scrollbar-thumb-muted-foreground/20",
-              )}
-            >
-              {children}
-            </pre>
+            <div className="overflow-hidden">{children}</div>
           ),
           ul: ({ children }) => (
             <ul className="mb-2 ml-4 list-disc space-y-1 break-words last:mb-0">
