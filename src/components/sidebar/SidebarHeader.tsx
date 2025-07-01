@@ -11,7 +11,7 @@ export default function AppSidebarHeader() {
         height={32}
         className="flex-shrink-0"
       />
-      <h1 className="text-2xl font-bold text-zinc-950 group-data-[collapsible=icon]:hidden">
+      <h1 className="text-xl font-bold group-data-[collapsible=icon]:hidden">
         NexiaAI
       </h1>
     </SidebarHeader>

@@ -20,7 +20,7 @@ export default function Messages({ messages, isLoading }: MessagesProps) {
           </div>
         )}
         {isLoading && (
-          <div className="flex-1 rounded-lg bg-gray-50 p-3">
+          <div className="flex-1 rounded-lg p-3">
             <div className="flex items-center gap-2">
               <div className="flex gap-1">
                 <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.3s]"></div>

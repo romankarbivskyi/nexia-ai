@@ -13,6 +13,14 @@ import { useRouter } from "next/navigation";
 import { deleteAllChats } from "@/actions/chat";
 import { useChatsStore } from "@/store/useChatsStore";
 import { createClient } from "@/utils/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { useTheme } from "next-themes";
 
 interface SettingsModalProps {
   defaultTab?: "general" | "profile";
@@ -22,10 +30,13 @@ export default function SettingsModal({
   defaultTab = "general",
 }: SettingsModalProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+
   const { user, clearUser } = useUserStore();
   const { openModal, closeModal } = useModalStore();
   const { refreshChats } = useChatsStore();
+
   const router = useRouter();
+  const { setTheme, theme } = useTheme();
 
   const handleDeleteAccount = async () => {
     if (
@@ -94,8 +105,20 @@ export default function SettingsModal({
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="profile">Profile</TabsTrigger>
         </TabsList>
-        <TabsContent value="general">
-          Make changes to your account here.
+        <TabsContent value="general" className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm">Theme</span>
+            <Select defaultValue={theme} onValueChange={setTheme}>
+              <SelectTrigger className="w-[100px]">
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </TabsContent>
         <TabsContent value="profile" className="space-y-2">
           <div className="flex items-center justify-between">
@@ -111,7 +134,7 @@ export default function SettingsModal({
           </div>
           <Separator />
           <div className="flex items-center justify-between">
-            <span className="text-sm">Password change</span>
+            <span className="text-sm">Change password</span>
             <Button
               variant="outline"
               size="sm"

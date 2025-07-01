@@ -19,6 +19,7 @@ export default function SidebarActions({
           <Button
             className="flex-1 group-data-[collapsible=icon]:p-0"
             variant="default"
+            size="sm"
             asChild
           >
             <Link href="/">
@@ -30,7 +31,7 @@ export default function SidebarActions({
           </Button>
           <Button
             variant="outline"
-            size="icon"
+            size="sm"
             onClick={onRefresh}
             disabled={isRefreshing}
             className="group-data-[collapsible=icon]:hidden"

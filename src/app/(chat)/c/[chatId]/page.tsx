@@ -22,7 +22,7 @@ export default async function Page({
   const { data: chatData, error: chatError } = await supabase
     .from("chats")
     .select()
-    .eq("chat_id", chatId)
+    .eq("id", chatId)
     .eq("user_id", user.id);
 
   if (chatError || !chatData) {

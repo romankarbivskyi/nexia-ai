@@ -69,7 +69,7 @@ export default function ChatInput({
                     <FormControl>
                       <textarea
                         placeholder="Ask anything..."
-                        className="max-h-32 min-h-[20px] resize-none border-0 bg-transparent p-0 text-sm focus:outline-none sm:text-base"
+                        className="max-h-32 min-h-[20px] resize-none border-0 bg-transparent p-0 text-sm focus:outline-none"
                         disabled={disabled || isSubmitting}
                         onKeyDown={handleKeyDown}
                         {...field}
@@ -86,7 +86,7 @@ export default function ChatInput({
               <Button
                 type="submit"
                 size="icon"
-                className="h-8 w-8 flex-shrink-0 rounded-full sm:h-10 sm:w-10"
+                className="h-8 w-8 flex-shrink-0 rounded-full"
                 disabled={!isFormValid || isSubmitting || disabled}
               >
                 <Send className="h-3 w-3 sm:h-4 sm:w-4" />

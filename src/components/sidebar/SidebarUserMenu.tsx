@@ -3,11 +3,7 @@
 import { Button } from "../ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { LogOut, Settings, User as UserIcon } from "lucide-react";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@radix-ui/react-popover";
+import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 import { SidebarFooter } from "../ui/sidebar";
 import { User } from "@supabase/supabase-js";
 import { useModalStore } from "@/store/useModalStore";
@@ -54,7 +50,7 @@ export default function SidebarUserMenu({
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-start text-left group-data-[collapsible=icon]:hidden">
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium">
                 {user?.user_metadata?.full_name || user?.email?.split("@")[0]}
               </span>
               <span className="max-w-[120px] truncate text-xs text-gray-500">
@@ -66,7 +62,7 @@ export default function SidebarUserMenu({
         <PopoverContent
           side="top"
           align="start"
-          className="w-min rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
+          className="w-min rounded-lg border p-2 shadow-lg"
           sideOffset={8}
         >
           <Button

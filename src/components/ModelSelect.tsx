@@ -27,7 +27,10 @@ export default function ModelSelect() {
       defaultValue={activeModel?.name || DEFAULT_MODEL}
       onValueChange={handleModelChange}
     >
-      <SelectTrigger className="bg-background m-2 w-[180px] rounded-2xl">
+      <SelectTrigger
+        className="bg-background m-2 w-[180px] rounded-2xl"
+        size="sm"
+      >
         <SelectValue placeholder="Model" />
       </SelectTrigger>
       <SelectContent className="max-w-min rounded-2xl">

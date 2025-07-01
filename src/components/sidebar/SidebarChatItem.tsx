@@ -5,12 +5,8 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@radix-ui/react-popover";
-import { Ellipsis, Pen, Delete } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
+import { Ellipsis, Pen, Trash2 } from "lucide-react";
 
 interface SidebarChatItemProps {
   chat: {
@@ -50,7 +46,7 @@ export default function SidebarChatItem({
   };
 
   return (
-    <SidebarMenuItem key={chat.id}>
+    <SidebarMenuItem className="menu-item">
       {editingChatId === chat.id ? (
         <div className="flex flex-1 items-center gap-1 px-2 py-1">
           <Input
@@ -77,31 +73,41 @@ export default function SidebarChatItem({
             {chat.title || "Untitled Chat"}
           </Link>
           <Popover>
-            <PopoverTrigger className="opacity-0 hover:opacity-100">
-              <Ellipsis />
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="menu-item__popover h-6 w-6 p-0 opacity-0 transition-opacity"
+              >
+                <Ellipsis className="h-4 w-4" />
+              </Button>
             </PopoverTrigger>
             <PopoverContent
               side="right"
               align="start"
-              className="w-min rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
+              className="bg-background w-min rounded-lg border p-1 shadow-lg"
               sideOffset={8}
             >
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-sm"
-                onClick={() => startEditing(chat.id, chat.title)}
-              >
-                <Pen className="mr-2 h-4 w-4" />
-                Rename
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-sm text-red-600 hover:bg-red-50"
-                onClick={() => onDelete(chat.id)}
-              >
-                <Delete className="mr-2 h-4 w-4" />
-                Delete
-              </Button>
+              <div className="flex flex-col">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 justify-start text-sm"
+                  onClick={() => startEditing(chat.id, chat.title)}
+                >
+                  <Pen className="mr-2 h-4 w-4" />
+                  Rename
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-destructive hover:bg-destructive/10 h-8 justify-start text-sm"
+                  onClick={() => onDelete(chat.id)}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </Button>
+              </div>
             </PopoverContent>
           </Popover>
         </SidebarMenuButton>

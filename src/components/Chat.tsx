@@ -135,7 +135,7 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
         <div ref={bottomRef}></div>
       </div>
 
-      <div className="border-t bg-white p-4">
+      <div className="border-t p-4">
         <div className="mx-auto max-w-3xl">
           <ChatInput onSubmit={handleChatInput} disabled={isLoading} />
         </div>
