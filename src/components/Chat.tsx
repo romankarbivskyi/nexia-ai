@@ -150,7 +150,7 @@ export default function Chat({ initialMessages = [] }: ChatProps) {
   }, [messages, isLoading, getContent]);
 
   return (
-    <div className="flex h-screen w-full flex-col overflow-hidden">
+    <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="flex-1 overflow-x-hidden overflow-y-auto">
         <Messages
           messages={messages}

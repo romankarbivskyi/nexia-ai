@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import Markdown from "./Markdown";
 
 interface MessageProps {
@@ -9,19 +8,22 @@ interface MessageProps {
 }
 
 export default function Message({ content, role }: MessageProps) {
+  if (role === "user") {
+    return (
+      <div className="flex w-full">
+        <div className="xs:max-w-[90%] bg-primary text-primary-foreground xs:px-3 xs:py-2 ml-auto max-w-[95%] min-w-0 overflow-hidden rounded-xl px-2 py-1.5 text-sm break-words sm:max-w-[85%] sm:px-4 sm:py-3 sm:text-base md:max-w-[80%] lg:max-w-[75%]">
+          <div className="min-w-0 overflow-hidden">
+            <Markdown>{content}</Markdown>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex w-full">
-      <div
-        className={cn(
-          "overflow-hidden rounded-xl border px-3 py-2 text-sm sm:px-4 sm:py-3 sm:text-base",
-          "max-w-[85%] sm:max-w-[75%] md:max-w-[70%] lg:max-w-[65%]",
-          "overflow-wrap-anywhere min-w-0 break-words",
-          role === "user"
-            ? "bg-primary text-primary-foreground ml-auto self-end"
-            : "bg-card text-foreground border-border mr-auto self-start",
-        )}
-      >
-        <div className="max-w-full min-w-0">
+      <div className="xs:max-w-[90%] bg-card text-foreground border-border xs:px-3 xs:py-2 mr-auto max-w-[95%] min-w-0 overflow-hidden rounded-xl border px-2 py-1.5 text-sm break-words sm:max-w-[85%] sm:px-4 sm:py-3 sm:text-base md:max-w-[80%] lg:max-w-[75%]">
+        <div className="min-w-0 overflow-hidden">
           <Markdown>{content}</Markdown>
         </div>
       </div>

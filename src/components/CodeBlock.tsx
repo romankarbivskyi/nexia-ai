@@ -35,7 +35,7 @@ export default function CodeBlock({
   if (!match) {
     return (
       <code
-        className="bg-muted text-muted-foreground overflow-wrap-anywhere rounded px-1 py-0.5 font-mono text-xs break-all sm:text-sm"
+        className="bg-muted text-muted-foreground rounded px-1 py-0.5 font-mono text-xs break-all sm:text-sm"
         {...props}
       >
         {children}
