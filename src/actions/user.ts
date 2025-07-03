@@ -110,7 +110,7 @@ export const resetPassword = async (email: string): Promise<ActionResult> => {
     const supabase = await createClient();
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/update-password`,
+      redirectTo: `${process.env.NEXT_PUBLIC_VERCEL_URL}/auth/callback?next=/update-password`,
     });
 
     if (error) {
