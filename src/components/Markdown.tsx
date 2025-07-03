@@ -100,7 +100,7 @@ export default function Markdown({ children }: MarkdownProps) {
           img: ({ ...props }) => (
             <img
               {...props}
-              className="border-border my-2 h-auto max-w-full rounded-lg border shadow-sm"
+              className="border-border my-2 h-auto max-w-full rounded-lg border shadow-sm sm:max-w-4/5"
             />
           ),
           a: ({ children, ...props }) => (
