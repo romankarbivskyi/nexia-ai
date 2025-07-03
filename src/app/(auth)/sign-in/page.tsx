@@ -25,10 +25,17 @@ import z from "zod";
 import { signInWithGoogle, signInWithPassword } from "@/actions/auth";
 import { toast } from "sonner";
 import { signInSchema } from "@/schemas/auth";
+import { useModalStore } from "@/store/useModalStore";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 export default function Page() {
+  const { openModal } = useModalStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
   const form = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -38,15 +45,34 @@ export default function Page() {
   });
 
   const onSubmit = async ({ email, password }: SignInFormValues) => {
-    const error = await signInWithPassword(email, password);
+    setIsLoading(true);
 
-    if (error) {
-      toast.error(error.message || "Failed to sign in. Please try again.");
+    try {
+      const result = await signInWithPassword(email, password);
+
+      if (result?.error) {
+        toast.error(result.error);
+      } else if (result?.success) {
+        toast.success("Signed in successfully!");
+        router.push("/");
+      }
+    } catch {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch {
+      toast.error("Failed to sign in with Google. Please try again.");
     }
   };
 
   return (
-    <Card className="mx-4 max-w-md">
+    <Card className="mx-4 w-full max-w-md">
       <CardHeader className="text-center">
         <CardTitle>Log In</CardTitle>
       </CardHeader>
@@ -66,6 +92,7 @@ export default function Page() {
                     <Input
                       placeholder="Enter your email"
                       type="email"
+                      disabled={isLoading}
                       {...field}
                     />
                   </FormControl>
@@ -83,6 +110,7 @@ export default function Page() {
                     <Input
                       placeholder="Enter your password"
                       type="password"
+                      disabled={isLoading}
                       {...field}
                     />
                   </FormControl>
@@ -94,17 +122,32 @@ export default function Page() {
               By signing up or logging in, you consent to NexiaAI&apos;s Terms
               of Use and Privacy Policy.
             </span>
-            <Button>Log In</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Signing in..." : "Log In"}
+            </Button>
           </form>
         </Form>
         <div className="flex items-center justify-between text-xs underline">
-          <Link href="#">Forgot password?</Link>
-          <Link href="/sign-up">Sign up</Link>
+          <button
+            type="button"
+            onClick={() => openModal("reset_password")}
+            className="hover:text-primary cursor-pointer"
+          >
+            Forgot password?
+          </button>
+          <Link href="/sign-up" className="hover:text-primary">
+            Sign up
+          </Link>
         </div>
       </CardContent>
       <Separator />
       <CardFooter>
-        <Button className="w-full" variant="outline" onClick={signInWithGoogle}>
+        <Button
+          className="w-full"
+          variant="outline"
+          onClick={handleGoogleSignIn}
+          type="button"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 18 18"

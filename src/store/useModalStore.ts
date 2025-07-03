@@ -3,10 +3,10 @@ import { create } from "zustand";
 
 interface ModalState {
   isOpen: boolean;
-  modal: "settings" | "change_password" | null;
+  modal: "settings" | "change_password" | "reset_password" | null;
   modalProps: Record<string, any>;
   openModal: (
-    modal: "settings" | "change_password",
+    modal: "settings" | "change_password" | "reset_password",
     props?: Record<string, any>,
   ) => void;
   closeModal: () => void;

@@ -4,25 +4,18 @@
 import { signInSchema, signUpSchema } from "@/schemas/auth";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-
-interface AuthResult {
-  message?: string;
-  success: boolean;
-  data?: any;
-  error?: string;
-}
+import { revalidatePath } from "next/cache";
 
 export const signInWithPassword = async (
   email: string,
   password: string,
-): Promise<AuthResult> => {
+): Promise<{ error?: string; success?: boolean }> => {
   try {
     const supabase = await createClient();
 
     const result = signInSchema.safeParse({ email, password });
     if (!result.success) {
       return {
-        success: false,
         error: result.error.errors[0]?.message || "Invalid input",
       };
     }
@@ -33,13 +26,12 @@ export const signInWithPassword = async (
     });
 
     if (error) {
-      return { success: false, error: error.message };
+      return { error: error.message };
     }
 
-    redirect("/");
+    return { success: true };
   } catch (error) {
     return {
-      success: false,
       error: error instanceof Error ? error.message : "Unknown error",
     };
   }
@@ -49,7 +41,7 @@ export const signUpWithPassword = async (
   email: string,
   password: string,
   confirmPassword: string,
-): Promise<AuthResult> => {
+): Promise<{ error?: string; success?: boolean; data?: any }> => {
   try {
     const supabase = await createClient();
 
@@ -61,7 +53,6 @@ export const signUpWithPassword = async (
 
     if (!result.success) {
       return {
-        success: false,
         error: result.error.errors[0]?.message || "Invalid input",
       };
     }
@@ -75,13 +66,12 @@ export const signUpWithPassword = async (
     });
 
     if (error) {
-      return { success: false, error: error.message };
+      return { error: error.message };
     }
 
     return { success: true, data };
   } catch (error) {
     return {
-      success: false,
       error: error instanceof Error ? error.message : "Unknown error",
     };
   }
@@ -114,5 +104,6 @@ export const signOut = async () => {
     throw new Error(error.message);
   }
 
+  revalidatePath("/");
   redirect("/sign-in");
 };

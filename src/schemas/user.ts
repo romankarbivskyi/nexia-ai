@@ -10,3 +10,17 @@ export const changePasswordSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+export const updatePasswordSchema = z
+  .object({
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });

@@ -8,6 +8,7 @@ const SettingsModal = lazy(() => import("@/components/modals/SettingsModal"));
 const ChangePassword = lazy(
   () => import("@/components/modals/ChangePasswordModal"),
 );
+const ResetModal = lazy(() => import("@/components/modals/ResetPasswordModal"));
 
 export default function Modal() {
   const { isOpen, closeModal, modal, modalProps } = useModalStore();
@@ -18,6 +19,8 @@ export default function Modal() {
         return <SettingsModal {...modalProps} />;
       case "change_password":
         return <ChangePassword {...modalProps} />;
+      case "reset_password":
+        return <ResetModal {...modalProps} />;
       default:
         return null;
     }
