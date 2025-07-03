@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Plus, RefreshCw } from "lucide-react";
-import { SidebarGroup, SidebarGroupContent } from "../ui/sidebar";
+import { SidebarGroup, SidebarGroupContent, useSidebar } from "../ui/sidebar";
 
 interface SidebarActionsProps {
   onRefresh: () => Promise<void>;
@@ -12,6 +12,8 @@ export default function SidebarActions({
   onRefresh,
   isRefreshing,
 }: SidebarActionsProps) {
+  const { setOpenMobile } = useSidebar();
+
   return (
     <SidebarGroup>
       <SidebarGroupContent>
@@ -20,6 +22,7 @@ export default function SidebarActions({
             className="flex-1 group-data-[collapsible=icon]:p-0"
             variant="default"
             size="sm"
+            onClick={() => setOpenMobile(false)}
             asChild
           >
             <Link href="/">

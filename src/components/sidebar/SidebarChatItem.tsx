@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem, useSidebar } from "../ui/sidebar";
 import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 import { Ellipsis, Pen, Trash2 } from "lucide-react";
 
@@ -26,6 +26,8 @@ export default function SidebarChatItem({
 }: SidebarChatItemProps) {
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
+
+  const { setOpenMobile } = useSidebar();
 
   const startEditing = (chatId: string, currentTitle: string) => {
     setEditingChatId(chatId);
@@ -69,7 +71,11 @@ export default function SidebarChatItem({
           isActive={chat.id === currentChatId}
           className="flex justify-between group-data-[collapsible=icon]:hidden"
         >
-          <Link href={`/c/${chat.id}`} className="flex-1 truncate">
+          <Link
+            href={`/c/${chat.id}`}
+            className="flex-1 truncate"
+            onClick={() => setOpenMobile(false)}
+          >
             {chat.title || "Untitled Chat"}
           </Link>
           <Popover>

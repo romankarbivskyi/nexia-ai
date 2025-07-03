@@ -52,7 +52,7 @@ export default function CodeBlock({
         <Button
           variant="ghost"
           size="sm"
-          className="h-6 w-6 p-0 opacity-0 transition-opacity group-hover:opacity-100"
+          className="h-6 w-6 p-0 opacity-100 transition-opacity group-hover:opacity-80"
           onClick={handleCopy}
         >
           {copied ? (
