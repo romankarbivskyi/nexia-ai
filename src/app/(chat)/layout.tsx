@@ -49,6 +49,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="flex h-screen w-full overflow-hidden">
         <AppSidebar />
         <main className="flex flex-1 flex-col overflow-hidden">
+          <div className="absolute hidden md:block">
+            <SidebarTrigger className="h-8 w-8" />
+          </div>
           <div className="border-border bg-background flex h-12 items-center border-b px-3 sm:px-4 md:hidden">
             <SidebarTrigger className="h-8 w-8" />
             <div className="text-foreground ml-3 text-sm font-medium">
