@@ -123,7 +123,7 @@ export default function Page() {
               of Use and Privacy Policy.
             </span>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Log In"}
+              {isLoading ? "Logging in..." : "Log In"}
             </Button>
           </form>
         </Form>

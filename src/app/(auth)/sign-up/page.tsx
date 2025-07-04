@@ -18,10 +18,15 @@ import z from "zod";
 import { signUpWithPassword } from "@/actions/auth";
 import { toast } from "sonner";
 import { signUpSchema } from "@/schemas/auth";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 export default function Page() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -36,20 +41,23 @@ export default function Page() {
     password,
     confirmPassword,
   }: SignUpFormValues) => {
-    const { data, error } = await signUpWithPassword(
-      email,
-      password,
-      confirmPassword,
-    );
+    setIsLoading(true);
 
-    if (error) {
-      toast.error(error || "Failed to sign in. Please try again.");
-    }
+    try {
+      const result = await signUpWithPassword(email, password, confirmPassword);
 
-    if (!data.session) {
-      toast.success(
-        "Sign up successful! Please check your email to verify your account.",
-      );
+      if (result?.error) {
+        toast.error(result.error || "Failed to sign in. Please try again.");
+      } else if (result?.success) {
+        toast.success(
+          "Signed up successfully! Please check your email to verify your account.",
+        );
+        router.push("/");
+      }
+    } catch {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -119,7 +127,9 @@ export default function Page() {
               By signing up or logging in, you consent to NexiaAI&apos;s Terms
               of Use and Privacy Policy.
             </span>
-            <Button>Sign Up</Button>
+            <Button disabled={isLoading}>
+              {isLoading ? "Signing up..." : "Sign Up"}
+            </Button>
           </form>
         </Form>
         <div className="flex justify-end">
