@@ -2,6 +2,8 @@
 
 A free, advanced AI chat platform supporting multiple AI models for intelligent conversations and image generation.
 
+![Preview](preview.png)
+
 ## Features
 
 - 🤖 **Multi-Model Support**: Chat with various AI models including OpenAI
@@ -58,6 +60,7 @@ Fill in your environment variables:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_VERCEL_URL=http://localhost:3000
 ```
 
 4. Run the development server:
